@@ -1,0 +1,15 @@
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.csproj.AssemblyReference.cache
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.AssemblyInfoInputs.cache
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.AssemblyInfo.cs
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.csproj.CoreCompileInputs.cache
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\bin\Debug\net6.0\ToDoListApp2.exe
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\bin\Debug\net6.0\ToDoListApp2.deps.json
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\bin\Debug\net6.0\ToDoListApp2.runtimeconfig.json
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\bin\Debug\net6.0\ToDoListApp2.dll
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\bin\Debug\net6.0\ToDoListApp2.pdb
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.dll
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\refint\ToDoListApp2.dll
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.pdb
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ToDoListApp2.genruntimeconfig.cache
+C:\Users\willi\source\repos\ToDoListApp2\ToDoListApp2\obj\Debug\net6.0\ref\ToDoListApp2.dll
