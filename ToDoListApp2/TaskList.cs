@@ -107,7 +107,18 @@ namespace ToDoListApp2
                 }
 
                 Console.WriteLine($"Old category: {currentList.Category}");
-                category = TaskManager.CreateVariable("Enter the new category or leave empty to keep the old category: ", false, false, false, null, null);
+
+                var categoryManager = new CategoryManager();
+                var taskLists = new TaskLists();
+                taskLists.ViewCategories(categoryManager);
+                var temp = taskLists.ChooseCategory(categoryManager);
+
+                if (temp == "")
+                {
+                    throw new Exception();
+                }
+
+                category = temp;
             }
             catch (Exception)
             {

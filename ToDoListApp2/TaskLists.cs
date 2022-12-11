@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 
 namespace ToDoListApp2
 {
@@ -10,10 +11,23 @@ namespace ToDoListApp2
         {
             string title;
             string category;
+
             try
             {
                 title = TaskManager.CreateVariable("Enter new list title: ", true, false, false, fileManager.Lists, null);
-                category = TaskManager.CreateVariable("Enter new list category (optional): ", false, false, false, null, null);
+
+                var categoryManager = new CategoryManager();
+
+                ViewCategories(categoryManager);
+                var temp = ChooseCategory(categoryManager);
+
+                if (temp == "")
+                {
+                    throw new Exception();
+                }
+
+                category = temp;
+
             }
             catch (Exception)
             {
@@ -245,6 +259,100 @@ namespace ToDoListApp2
             }
 
             return true;
+        }
+
+        public void ViewCategories(FileManager fileManager)
+        {
+            Console.Clear();
+
+            Console.WriteLine("CATEGORY MENU");
+            Console.WriteLine();
+
+            if (fileManager.Lists.Count == 0)
+            {
+                Console.WriteLine("No existing categories");
+                Console.WriteLine();
+
+                return;
+            }
+
+            Console.WriteLine("Current existing caterogies:");
+            Console.WriteLine();
+
+            foreach (TaskList list in fileManager.Lists)
+            {
+                Console.WriteLine($"Category position #{fileManager.Lists.IndexOf(list) + 1}");
+                Console.WriteLine($"    Title - {list.Title}");
+                Console.WriteLine();
+            }
+        }
+
+        public string ChooseCategory(FileManager fileManager)
+        {
+            string position;
+            try
+            {
+                position = TaskManager.CreateVariable("Enter the position of the category you want: ", true, true, false, null, fileManager.Lists);
+            }
+            catch (Exception)
+            {
+                return "";
+            }
+
+            string category = fileManager.Lists[Convert.ToInt32(position) - 1].Title;
+
+            return category;
+        }
+
+        public void CreateCategory(FileManager fileManager)
+        {
+            string title;
+            try
+            {
+                title = TaskManager.CreateVariable("Enter new list category: ", true, false, false, fileManager.Lists, null);
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            TaskList newList = new()
+            {
+                Title = title
+            };
+
+            fileManager.Lists.Add(newList);
+
+            fileManager.Update();
+        }
+
+        public void DeleteCategory(FileManager fileManager)
+        {
+            string position;
+
+            try
+            {
+                position = TaskManager.CreateVariable("Enter position of the category you want to delete: ", true, true, false, null, fileManager.Lists);
+
+                if (position == "1")
+                {
+                    Console.WriteLine("Can not delete the first category. ");
+
+                    DeleteCategory(fileManager);
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
+            if (TaskManager.AreYouSure("Are you sure you want to delete this category? y/N: "))
+            {
+                fileManager.Lists.RemoveAt(Convert.ToInt32(position) - 1);
+
+                fileManager.Update();
+            }
         }
 
         public void Sort(FileManager fileManager)

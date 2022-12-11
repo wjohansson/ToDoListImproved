@@ -27,6 +27,7 @@ namespace ToDoListApp2
             Console.WriteLine("[L] To view recently visited list.");
             Console.WriteLine("[D] To delete a list.");
             Console.WriteLine("[N] To create a new list.");
+            Console.WriteLine("[X] To go to category menu.");
             Console.WriteLine("[S] To sort all lists.");
             Console.WriteLine("[A] To toggle between archive and overview menu.");
             Console.WriteLine("[DEL] To delete all lists and tasks.");
@@ -123,8 +124,15 @@ namespace ToDoListApp2
                 case "N":
                     _taskLists.ViewListsCollapsed(fileManager);
                     _taskLists.CreateList(fileManager);
+
                     _taskLists.ViewListsCollapsed(fileManager);
                     OverviewOptions(fileManager);
+
+                    break;
+                case "X":
+                    var categoryManager = new CategoryManager();
+                    _taskLists.ViewCategories(categoryManager);
+                    CategoryOptions(categoryManager);
 
                     break;
                 case "S":
@@ -150,7 +158,7 @@ namespace ToDoListApp2
 
                     if (_taskLists.ExistsContent(fileManager))
                     {
-                        fileManager.ClearLists(fileManager);
+                        fileManager.ClearLists(fileManager, false);
                     }
 
                     _taskLists.ViewListsCollapsed(fileManager);
@@ -168,6 +176,72 @@ namespace ToDoListApp2
                 default:
                     _taskLists.ViewListsCollapsed(fileManager);
                     OverviewOptions(fileManager);
+
+                    break;
+            }
+        }
+
+        private void CategoryOptions(FileManager fileManager)
+        {
+            Console.WriteLine("[N] To create a new category.");
+            Console.WriteLine("[D] To delete a category.");
+            Console.WriteLine("[DEL] To delete all categories.");
+            Console.WriteLine("[B] To go back.");
+            Console.WriteLine("[Q] To quit the program.");
+
+            Console.WriteLine();
+            Console.Write("What do you want to do: ");
+            switch (Console.ReadKey().Key.ToString().ToUpper())
+            {
+                case "N":
+                    _taskLists.ViewCategories(fileManager);
+                    _taskLists.CreateCategory(fileManager);
+
+                    _taskLists.ViewCategories(fileManager);
+                    CategoryOptions(fileManager);
+
+                    break;
+                case "D":
+                    _taskLists.ViewCategories(fileManager);
+
+                    if (_taskLists.ExistsContent(fileManager))
+                    {
+                        _taskLists.DeleteCategory(fileManager);
+                    }
+
+                    _taskLists.ViewCategories(fileManager);
+                    CategoryOptions(fileManager);
+
+                    break;
+                case "DELETE":
+                    _taskLists.ViewCategories(fileManager);
+
+                    if (_taskLists.ExistsContent(fileManager))
+                    {
+                        fileManager.ClearLists(fileManager, true);
+                    }
+
+                    _taskLists.ViewCategories(fileManager);
+                    CategoryOptions(fileManager);
+
+                    break;
+                case "B":
+                    var activeManager = new ActiveManager();
+                    _taskLists.ViewListsCollapsed(activeManager);
+                    OverviewOptions(activeManager);
+
+                    break;
+                case "Q":
+                    _taskLists.ViewCategories(fileManager);
+                    QuitProgram();
+
+                    _taskLists.ViewCategories(fileManager);
+                    CategoryOptions(fileManager);
+
+                    break;
+                default:
+                    _taskLists.ViewCategories(fileManager);
+                    CategoryOptions(fileManager);
 
                     break;
             }
@@ -512,7 +586,7 @@ namespace ToDoListApp2
                         Console.WriteLine("Priority must be a number between 1 and 5. Try again");
                         continue;
                     }
-                    
+
                 }
 
                 if (isInt && isMandatory)

@@ -44,20 +44,17 @@ namespace ToDoListApp2
             File.WriteAllText(Path, jsonData);
         }
 
-        public void ClearLists(FileManager fileManager)
+        public virtual void ClearLists(FileManager fileManager, bool fromCategory)
         {
             string[] fileType = fileManager.GetType().ToString().Split(".");
 
-
             if (TaskManager.AreYouSure($"Are you sure you want to delete ALL {fileType[1]} lists, this can not be undone? y/N: "))
             {
-                FileManager historyManager = TaskManager.GetHistoryManager(fileManager);
-
-
                 fileManager.Lists.Clear();
-                historyManager.Lists.Clear();
-
                 fileManager.Update();
+
+                FileManager historyManager = TaskManager.GetHistoryManager(fileManager);
+                historyManager.Lists.Clear();
                 historyManager.Update();
             }
 
