@@ -1,0 +1,15 @@
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\bin\Debug\net6.0\ToDoListImproved.exe
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\bin\Debug\net6.0\ToDoListImproved.deps.json
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\bin\Debug\net6.0\ToDoListImproved.runtimeconfig.json
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\bin\Debug\net6.0\ToDoListImproved.dll
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\bin\Debug\net6.0\ToDoListImproved.pdb
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.csproj.AssemblyReference.cache
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.AssemblyInfoInputs.cache
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.AssemblyInfo.cs
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.csproj.CoreCompileInputs.cache
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.dll
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\refint\ToDoListImproved.dll
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.pdb
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ToDoListImproved.genruntimeconfig.cache
+C:\Users\willi\source\repos\ToDoListImproved\ToDoListApp2\obj\Debug\net6.0\ref\ToDoListImproved.dll

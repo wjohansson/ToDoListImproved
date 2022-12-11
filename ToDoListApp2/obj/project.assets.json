@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\willi\\source\\repos\\ToDoListApp2\\ToDoListApp2\\ToDoListApp2.csproj",
-      "projectName": "ToDoListApp2",
-      "projectPath": "C:\\Users\\willi\\source\\repos\\ToDoListApp2\\ToDoListApp2\\ToDoListApp2.csproj",
+      "projectUniqueName": "C:\\Users\\willi\\source\\repos\\ToDoListImproved\\ToDoListApp2\\ToDoListImproved.csproj",
+      "projectName": "ToDoListImproved",
+      "projectPath": "C:\\Users\\willi\\source\\repos\\ToDoListImproved\\ToDoListApp2\\ToDoListImproved.csproj",
       "packagesPath": "C:\\Users\\willi\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\willi\\source\\repos\\ToDoListApp2\\ToDoListApp2\\obj\\",
+      "outputPath": "C:\\Users\\willi\\source\\repos\\ToDoListImproved\\ToDoListApp2\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\willi\\AppData\\Roaming\\NuGet\\NuGet.Config",
