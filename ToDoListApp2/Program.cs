@@ -4,18 +4,26 @@
     {
         static void Main(string[] args)
         {
-            // Lägga till möjlighet att gå till förra sidan från alla funktioner, eller åtminstone de
-            //  som skapar och ändrar, alltså en quit/return från överallt
-            // Kolla edit funktion ifall den fungerar även fast man använder den från toggelarchive funktionen,
-            //  den fungerar inte, måste fixas
-            // Kolla are you sure meddelanden, kommer på fel ställen om man kallar dom från togglearchive funktionerna, blir
-            //  nog rätt då man fixar edit funktionen
+            // Funktioner som jag inte haft tid att implementera:
             // Fixa undo på alla saker, hela vägen tillbaka till ursprung
+            // Fixa archive för tasks så att de ser ut likadant som för lists
 
 
             // Sista koll:
             // Notera alla funktioner som en kommentar här i program för att komma ihåg allt som går att göra
             // GÅ igenom hela programmet, och försöka nå alla endpoints med debugger för att kolla så att allt fungerar
+            // Pusha upp på ny branch i git
+            // Kolla igenom alla funktioner så att de fungerar som det ska
+
+            // Frågor:
+            // Om man har funktioner som man använder flera gånger,
+            //  ska man skapa en ny klass och hämta in den via komposition då?
+            //  Eller kan man bara lägga till den i en befintlig klass och göra den 
+
+
+            //var read = Console.ReadKey().Key.ToString();
+            //Console.WriteLine(read.GetType());
+            //Console.ReadLine();
 
 
             var activeManager = new ActiveManager();

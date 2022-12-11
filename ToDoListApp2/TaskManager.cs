@@ -7,8 +7,6 @@ namespace ToDoListApp2
     {
         public static int listPosition = 0;
         public static int taskPosition = 0;
-        public static bool listExists;
-        public static bool taskExists;
 
         private readonly Task _task;
         private readonly TaskList _taskList;
@@ -31,13 +29,12 @@ namespace ToDoListApp2
             Console.WriteLine("[N] To create a new list.");
             Console.WriteLine("[S] To sort all lists.");
             Console.WriteLine("[A] To toggle between archive and overview menu.");
-            Console.WriteLine("[H] To delete all history.");
-            Console.WriteLine("[DELALL] To delete all lists and tasks.");
+            Console.WriteLine("[DEL] To delete all lists and tasks.");
             Console.WriteLine("[Q] To quit the program.");
 
             Console.WriteLine();
             Console.Write("What do you want to do: ");
-            switch (Console.ReadLine().ToUpper())
+            switch (Console.ReadKey().Key.ToString().ToUpper())
             {
                 case "E":
                     _taskLists.ViewListsExpanded(fileManager);
@@ -54,14 +51,15 @@ namespace ToDoListApp2
 
                     if (_taskLists.ExistsContent(fileManager))
                     {
-                        _taskLists.ViewList(fileManager);
-                        ListOptions(fileManager);
+                        if (_taskLists.ViewList(fileManager))
+                        {
+                            ListOptions(fileManager);
+                            break;
+                        }
                     }
-                    else
-                    {
-                        _taskLists.ViewListsCollapsed(fileManager);
-                        OverviewOptions(fileManager);
-                    }
+
+                    _taskLists.ViewListsCollapsed(fileManager);
+                    OverviewOptions(fileManager);
 
                     break;
                 case "L":
@@ -73,18 +71,9 @@ namespace ToDoListApp2
 
                         try
                         {
-                            FileManager historyManager = null;
+                            FileManager historyManager = GetHistoryManager(fileManager);
 
-                            if (fileManager.GetType() == new ActiveManager().GetType())
-                            {
-                                historyManager = new HistoryManager();
-                            }
-                            else if (fileManager.GetType() == new ArchiveManager().GetType())
-                            {
-                                historyManager = new ArchiveHistoryManager();
-                            }
-
-                            historyListId = historyManager.Lists[0].ListId;
+                            historyListId = historyManager.Lists[0].Id;
                         }
                         catch (ArgumentOutOfRangeException)
                         {
@@ -100,7 +89,7 @@ namespace ToDoListApp2
 
                         foreach (TaskList list in fileManager.Lists)
                         {
-                            if (historyListId == list.ListId)
+                            if (historyListId == list.Id)
                             {
                                 listPosition = fileManager.Lists.IndexOf(list) + 1;
                                 break;
@@ -151,45 +140,17 @@ namespace ToDoListApp2
 
                     break;
                 case "A":
-                    if (fileManager.GetType() == new ActiveManager().GetType())
-                    {
-                        var archiveManager = new ArchiveManager();
-                        _taskLists.ViewListsCollapsed(archiveManager);
-                        OverviewOptions(archiveManager);
-                    }
-                    else if (fileManager.GetType() == new ArchiveManager().GetType())
-                    {
-                        var activeManager = new ActiveManager();
-                        _taskLists.ViewListsCollapsed(activeManager);
-                        OverviewOptions(activeManager);
-                    }
+                    var oppositeManager = GetOppositeManager(fileManager);
+                    _taskLists.ViewListsCollapsed(oppositeManager);
+                    OverviewOptions(oppositeManager);
 
                     break;
-                case "H":
-                    _taskLists.ViewListsCollapsed(fileManager);
-
-                    FileManager manager = null;
-
-                    if (fileManager.GetType() == new ActiveManager().GetType())
-                    {
-                        manager = new HistoryManager();
-                    }
-                    else if (fileManager.GetType() == new ArchiveManager().GetType())
-                    {
-                        manager = new ArchiveHistoryManager();
-                    }
-                    manager.Clear(manager);
-
-                    _taskLists.ViewListsCollapsed(fileManager);
-                    OverviewOptions(fileManager);
-
-                    break;
-                case "DELALL":
+                case "DELETE":
                     _taskLists.ViewListsCollapsed(fileManager);
 
                     if (_taskLists.ExistsContent(fileManager))
                     {
-                        fileManager.Clear(fileManager);
+                        fileManager.ClearLists(fileManager);
                     }
 
                     _taskLists.ViewListsCollapsed(fileManager);
@@ -228,7 +189,7 @@ namespace ToDoListApp2
 
             Console.WriteLine();
             Console.Write("What do you want to do: ");
-            switch (Console.ReadLine().ToUpper())
+            switch (Console.ReadKey().Key.ToString().ToUpper())
             {
                 case "E":
                     _taskList.ViewTasksExpanded(fileManager);
@@ -242,7 +203,7 @@ namespace ToDoListApp2
                     break;
                 case "M":
                     _taskList.ViewTasksCollapsed(fileManager);
-                    _taskList.Edit(fileManager);
+                    _taskList.Edit(fileManager, false);
 
                     _taskList.ViewTasksCollapsed(fileManager);
                     ListOptions(fileManager);
@@ -250,12 +211,18 @@ namespace ToDoListApp2
                     break;
                 case "A":
                     _taskList.ViewTasksCollapsed(fileManager);
-                    _taskList.ToggleArchive(fileManager);
 
-                    listPosition = 0;
+                    if (_taskList.ToggleArchive(fileManager))
+                    {
+                        listPosition = 0;
 
-                    _taskLists.ViewListsCollapsed(fileManager);
-                    OverviewOptions(fileManager);
+                        _taskLists.ViewListsCollapsed(fileManager);
+                        OverviewOptions(fileManager);
+                        break;
+                    }
+
+                    _taskList.ViewTasksCollapsed(fileManager);
+                    ListOptions(fileManager);
 
                     break;
                 case "V":
@@ -263,14 +230,15 @@ namespace ToDoListApp2
 
                     if (_taskList.ExistsContent(fileManager))
                     {
-                        _taskList.ViewTask(fileManager);
-                        TaskOptions(fileManager);
+                        if (_taskList.ViewTask(fileManager))
+                        {
+                            TaskOptions(fileManager);
+                            break;
+                        }
                     }
-                    else
-                    {
-                        _taskList.ViewTasksCollapsed(fileManager);
-                        ListOptions(fileManager);
-                    }
+
+                    _taskList.ViewTasksCollapsed(fileManager);
+                    ListOptions(fileManager);
 
                     break;
                 case "D":
@@ -347,7 +315,7 @@ namespace ToDoListApp2
             Console.WriteLine("[M] To modify this task.");
             Console.WriteLine("[A] To archive this task.");
             Console.WriteLine("[D] To delete a sub-task.");
-            Console.WriteLine("[MS] To edit a sub-task.");
+            Console.WriteLine("[S] To edit a sub-task.");
             Console.WriteLine("[N] To create a new sub-task.");
             Console.WriteLine("[B] To go back to list overview.");
             Console.WriteLine("[Q] To quit the program.");
@@ -355,7 +323,7 @@ namespace ToDoListApp2
             Console.WriteLine();
             Console.Write("What do you want to do: ");
 
-            switch (Console.ReadLine().ToUpper())
+            switch (Console.ReadKey().Key.ToString().ToUpper())
             {
                 case "M":
                     _task.ViewSubTasks(fileManager);
@@ -367,23 +335,33 @@ namespace ToDoListApp2
                     break;
                 case "A":
                     _task.ViewSubTasks(fileManager);
-                    _task.ToggleArchive(fileManager);
 
-                    taskPosition = 0;
+                    if (_task.ToggleArchive(fileManager))
+                    {
+                        taskPosition = 0;
 
-                    _taskList.ViewTasksCollapsed(fileManager);
-                    ListOptions(fileManager);
-
-                    break;
-                case "D":
-                    _task.ViewSubTasks(fileManager);
-                    _task.DeleteSubTask(fileManager);
+                        _taskList.ViewTasksCollapsed(fileManager);
+                        ListOptions(fileManager);
+                        break;
+                    }
 
                     _task.ViewSubTasks(fileManager);
                     TaskOptions(fileManager);
 
                     break;
-                case "MS":
+                case "D":
+                    _task.ViewSubTasks(fileManager);
+
+                    if (_task.ExistsContent(fileManager))
+                    {
+                        _task.DeleteSubTask(fileManager);
+                    }
+
+                    _task.ViewSubTasks(fileManager);
+                    TaskOptions(fileManager);
+
+                    break;
+                case "S":
                     _task.ViewSubTasks(fileManager);
                     _task.EditSubTask(fileManager);
 
@@ -422,10 +400,8 @@ namespace ToDoListApp2
             }
         }
 
-        public static void RemoveListFromHistory(FileManager fileManager)
+        public static FileManager GetHistoryManager(FileManager fileManager)
         {
-            int listId = fileManager.Lists[listPosition - 1].ListId;
-
             FileManager historyManager = null;
 
             if (fileManager.GetType() == new ActiveManager().GetType())
@@ -437,9 +413,137 @@ namespace ToDoListApp2
                 historyManager = new ArchiveHistoryManager();
             }
 
-            historyManager.Lists.RemoveAll(TaskList => TaskList.ListId == listId);
+            return historyManager;
+        }
+
+        public static FileManager GetOppositeManager(FileManager fileManager)
+        {
+            FileManager oppositeManager = null;
+
+            if (fileManager.GetType() == new ActiveManager().GetType())
+            {
+                oppositeManager = new ArchiveManager();
+            }
+            else if (fileManager.GetType() == new ArchiveManager().GetType())
+            {
+                oppositeManager = new ActiveManager();
+            }
+
+            return oppositeManager;
+        }
+
+        public static void RemoveListFromHistory(FileManager fileManager)
+        {
+            int listId = fileManager.Lists[listPosition - 1].Id;
+
+            FileManager historyManager = GetHistoryManager(fileManager);
+
+            historyManager.Lists.RemoveAll(TaskList => TaskList.Id == listId);
 
             historyManager.Update();
+        }
+
+        public static string CreateVariable(string message, bool isMandatory, bool isInt, bool isPrio, dynamic? duplicateCheck, dynamic? positionCheck)
+        {
+            Console.WriteLine();
+            Console.WriteLine("[0] To go back");
+            Console.WriteLine();
+
+            while (true)
+            {
+                Console.Write(message);
+                string newVariable = Console.ReadLine();
+
+                if (newVariable == "0")
+                {
+                    throw new Exception();
+                }
+
+                if (isMandatory && String.IsNullOrWhiteSpace(newVariable))
+                {
+                    Console.WriteLine("Can not be empty. Try again");
+
+                    continue;
+                }
+                else if (!isMandatory && String.IsNullOrWhiteSpace(newVariable))
+                {
+                    newVariable = "Null";
+                }
+
+                if (duplicateCheck != null)
+                {
+                    var exists = false;
+
+                    foreach (var obj in duplicateCheck)
+                    {
+                        if (obj.Title == newVariable)
+                        {
+                            Console.WriteLine("Already exists. Try again");
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if (exists)
+                    {
+                        continue;
+                    }
+
+                    return newVariable;
+                }
+
+                if (isPrio)
+                {
+                    try
+                    {
+                        if (newVariable != "Null")
+                        {
+                            int temp = Convert.ToInt32(newVariable);
+
+                            if (temp > 5 || temp < 1)
+                            {
+                                throw new FormatException();
+                            }
+                        }
+                        return newVariable;
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Priority must be a number between 1 and 5. Try again");
+                        continue;
+                    }
+                    
+                }
+
+                if (isInt && isMandatory)
+                {
+                    try
+                    {
+                        int temp = Convert.ToInt32(newVariable);
+                    }
+                    catch (FormatException)
+                    {
+                        Console.WriteLine("Position must be a number. Try again");
+                        continue;
+                    }
+                }
+
+                if (positionCheck != null)
+                {
+                    try
+                    {
+                        var temp = positionCheck[Convert.ToInt32(newVariable) - 1];
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        Console.WriteLine("Does not exist. Try again");
+                        continue;
+                    }
+                }
+
+                return newVariable;
+            }
+
         }
 
         public static bool AreYouSure(string message)

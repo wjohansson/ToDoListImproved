@@ -2,20 +2,18 @@
 {
     public class SubTask
     {
-        public string SubTaskTitle { get; set; }
-        public string SubTaskDescription { get; set; }
-        public int SubTaskId { get; init; }
+        public string Title { get; set; }
+        public string Description { get; set; }
 
         public SubTask()
         {
 
         }
 
-        public SubTask(string subTaskTitle, string subTaskDescription, int subTaskId)
+        public SubTask(string subTaskTitle, string subTaskDescription)
         {
-            SubTaskTitle = subTaskTitle;
-            SubTaskDescription = subTaskDescription;
-            SubTaskId = subTaskId;
+            Title = subTaskTitle;
+            Description = subTaskDescription;
         }
     }
 }

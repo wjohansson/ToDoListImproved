@@ -5,9 +5,9 @@ namespace ToDoListApp2
 {
     public class TaskList
     {
-        public string ListTitle { get; set; }
-        public string ListCategory { get; set; }
-        public int ListId { get; set; }
+        public string Title { get; set; }
+        public string Category { get; set; }
+        public int Id { get; set; }
         public List<Task> Tasks { get; set; }
 
         public TaskList()
@@ -17,9 +17,9 @@ namespace ToDoListApp2
 
         public TaskList(string listTitle, string listCaterogy, int listId, List<Task> tasks)
         {
-            ListTitle = listTitle;
-            ListCategory = listCaterogy;
-            ListId = listId;
+            Title = listTitle;
+            Category = listCaterogy;
+            Id = listId;
             Tasks = tasks;
         }
 
@@ -27,78 +27,24 @@ namespace ToDoListApp2
         {
             List<Task> tasks = fileManager.Lists[TaskManager.listPosition - 1].Tasks;
 
-            Console.Write("Enter a new task: ");
-            string title = Console.ReadLine();
+            string title;
+            string description;
+            string priority;
 
-            if (String.IsNullOrWhiteSpace(title))
+            try
             {
-                Console.WriteLine("Task title can not be empty. Try again");
+                title = TaskManager.CreateVariable("Enter a new task: ", true, false, false, tasks, null);
 
-                CreateTask(fileManager);
+                description = TaskManager.CreateVariable("Enter the task description (optional): ", false, false, false, null, null);
 
+                priority = TaskManager.CreateVariable("Enter priority of the task as a number between 1 and 5 (optional): ", false, true, true, null, null);
+            }
+            catch (Exception)
+            {
                 return;
             }
 
-            foreach (Task task in tasks)
-            {
-                if (task.TaskTitle == title)
-                {
-                    Console.WriteLine("Task already exists. Try again.");
-
-                    CreateTask(fileManager);
-
-                    return;
-                }
-            }
-
-            Console.Write("Enter the task description (optional): ");
-            string description = Console.ReadLine();
-
-            if (String.IsNullOrWhiteSpace(description))
-            {
-                description = "No description";
-            }
-
-            Console.Write("Enter priority of the task as a number between 1 and 5 (optional): ");
-            string priorityInput = Console.ReadLine();
-
-            if (String.IsNullOrWhiteSpace(priorityInput))
-            {
-                priorityInput = "None";
-            }
-            else
-            {
-                try
-                {
-                    int priority = Convert.ToInt32(priorityInput);
-
-                    if (priority > 5 || priority < 1)
-                    {
-                        throw new FormatException();
-                    }
-                }
-                catch (FormatException)
-                {
-
-                    Console.WriteLine("Priority must be a number between 1 and 5 or empty. Try again.");
-
-                    CreateTask(fileManager);
-
-                    return;
-                }
-            }
-
-            var id = 1;
-
-            foreach (Task task in tasks)
-            {
-                if (task.TaskId >= id)
-                {
-                    id = task.TaskId + 1;
-                }
-            }
-
-            Task newTask = new(title, description, id, priorityInput);
+            Task newTask = new(title, description, priority);
 
             tasks.Add(newTask);
 
@@ -115,90 +61,70 @@ namespace ToDoListApp2
 
             if (TaskManager.taskPosition == 0)
             {
+                string position;
                 try
                 {
-                    Console.Write("Enter the position of the task you want to delete: ");
-                    TaskManager.taskPosition = Convert.ToInt32(Console.ReadLine());
+                    position = TaskManager.CreateVariable("Enter the position of the task you want to delete: ", true, true, false, null, tasks);
                 }
-                catch (FormatException)
+                catch (Exception)
                 {
-                    Console.WriteLine("Position must be a number, try again.");
-
-                    DeleteTask(fileManager);
-
                     return;
                 }
+
+                TaskManager.taskPosition = Convert.ToInt32(position);
 
                 areYouSure = TaskManager.AreYouSure("Are you sure you want to delete this task? y/N: ");
             }
 
             if (areYouSure)
             {
-                try
-                {
-                    tasks.RemoveAt(TaskManager.taskPosition - 1);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    Console.WriteLine("Position does not exist, try again.");
-
-                    TaskManager.taskPosition = 0;
-                    DeleteTask(fileManager);
-
-                    return;
-                }
+                tasks.RemoveAt(TaskManager.taskPosition - 1);
 
                 fileManager.Update();
             }
         }
 
-        public void Edit(FileManager fileManager)
+        public void Edit(FileManager fileManager, bool mustChangeTitle)
         {
-            FileManager manager = null;
-
-            if (fileManager.GetType() == new ActiveManager().GetType())
-            {
-                manager = new ArchiveManager();
-            }
-            else if (fileManager.GetType() == new ArchiveManager().GetType())
-            {
-                manager = new ActiveManager();
-            }
+            FileManager oppositeManager = TaskManager.GetOppositeManager(fileManager);
 
             TaskList currentList = fileManager.Lists[TaskManager.listPosition - 1];
 
-            Console.WriteLine();
-            Console.WriteLine($"Old title: {currentList.ListTitle}");
 
-            Console.Write("Enter the new title or leave empty to keep the old title: ");
-            string newTitle = Console.ReadLine();
+            string title = "";
+            string category = "";
 
-            foreach (TaskList list in fileManager.Lists)
+            try
             {
-                if (list.ListTitle == newTitle)
+                Console.WriteLine();
+                Console.WriteLine($"Old title: {currentList.Title}");
+                if (mustChangeTitle)
                 {
-                    Console.WriteLine("List with the same name already exists. Try again");
-
-                    Edit(fileManager);
-
-                    return;
+                    title = TaskManager.CreateVariable("Enter the new title: ", true, false, false, oppositeManager.Lists, null);
                 }
+                else
+                {
+                    title = TaskManager.CreateVariable("Enter the new title or leave empty to keep the old title: ", false, false, false, fileManager.Lists, null);
+                }
+
+                Console.WriteLine($"Old category: {currentList.Category}");
+                category = TaskManager.CreateVariable("Enter the new category or leave empty to keep the old category: ", false, false, false, null, null);
+            }
+            catch (Exception)
+            {
+                return;
             }
 
-            Console.WriteLine($"Old category: {currentList.ListCategory}");
-            Console.Write("Enter the new category or leave empty to keep the old category: ");
-            string newCategory = Console.ReadLine();
-
-            if (TaskManager.AreYouSure("Are you sure you want to edit this list? y/N: "))
+            if (mustChangeTitle || TaskManager.AreYouSure("Are you sure you want to edit this list? y/N: "))
             {
-                if (!String.IsNullOrWhiteSpace(newTitle))
+                if (title != "Null")
                 {
-                    currentList.ListTitle = newTitle;
+                    currentList.Title = title;
                 }
 
-                if (!String.IsNullOrWhiteSpace(newCategory))
+                if (category != "Null")
                 {
-                    currentList.ListCategory = newCategory;
+                    currentList.Category = category;
                 }
 
                 fileManager.Update();
@@ -211,34 +137,17 @@ namespace ToDoListApp2
 
             List<Task> tasks = currentList.Tasks;
 
-            int position;
-
-            try
-            {
-                Console.Write("Enter the position of the task you want to toggle: ");
-                position = Convert.ToInt32(Console.ReadLine());
-            }
-            catch (FormatException)
-            {
-                Console.WriteLine("Position must be a number, try again.");
-
-                ToggleCompleteTask(fileManager);
-
-                return;
-            }
-
+            string position;
             Task currentTask;
 
             try
             {
-                currentTask = tasks[position - 1];
+                position = TaskManager.CreateVariable("Enter the position of the task you want to toggle: ", true, true, false, null, tasks);
+
+                currentTask = tasks[Convert.ToInt32(position) - 1];
             }
-            catch (ArgumentOutOfRangeException)
+            catch (Exception)
             {
-                Console.WriteLine("Position does not exist, try again.");
-
-                ToggleCompleteTask(fileManager);
-
                 return;
             }
 
@@ -256,7 +165,7 @@ namespace ToDoListApp2
             Console.WriteLine("LIST MENU");
             Console.WriteLine();
 
-            Console.WriteLine($"List Title - {currentList.ListTitle} (Category: {currentList.ListCategory})");
+            Console.WriteLine($"List Title - {currentList.Title} (Category: {currentList.Category})");
             Console.WriteLine();
 
             List<Task> tasks = currentList.Tasks;
@@ -277,7 +186,7 @@ namespace ToDoListApp2
                 }
 
                 Console.WriteLine($"    Task Position #{tasks.IndexOf(task) + 1}");
-                Console.WriteLine($"        Title - {task.TaskTitle}");
+                Console.WriteLine($"        Title - {task.Title}");
                 Console.WriteLine();
 
                 Console.ForegroundColor = ConsoleColor.White;
@@ -294,7 +203,7 @@ namespace ToDoListApp2
             Console.WriteLine("LIST MENU");
             Console.WriteLine();
 
-            Console.WriteLine($"List Title - {currentList.ListTitle} (Category: {currentList.ListCategory})");
+            Console.WriteLine($"List Title - {currentList.Title} (Category: {currentList.Category})");
             Console.WriteLine();
 
 
@@ -314,49 +223,40 @@ namespace ToDoListApp2
                 }
 
                 Console.WriteLine($"    Task Position #{currentList.Tasks.IndexOf(task) + 1}");
-                Console.WriteLine($"        Title - {task.TaskTitle} (Prio: {task.Priority})");
-                Console.WriteLine($"            ¤ {task.TaskDescription}");
+                Console.WriteLine($"        Title - {task.Title} (Prio: {task.Priority})");
+                Console.WriteLine($"            ¤ {task.Description}");
                 Console.WriteLine();
 
                 foreach (SubTask subTask in task.SubTasks)
                 {
                     Console.WriteLine($"            Sub-Task Position #{task.SubTasks.IndexOf(subTask) + 1}");
-                    Console.WriteLine($"                Title - {subTask.SubTaskTitle}");
-                    Console.WriteLine($"                    ¤ {subTask.SubTaskDescription}");
+                    Console.WriteLine($"                Title - {subTask.Title}");
+                    Console.WriteLine($"                    ¤ {subTask.Description}");
                     Console.WriteLine();
                 }
+
+                Console.ForegroundColor = ConsoleColor.White;
             }
         }
 
-        public void ViewTask(FileManager fileManager)
+        public bool ViewTask(FileManager fileManager)
         {
+            List<Task> tasks = fileManager.Lists[TaskManager.listPosition - 1].Tasks;
             try
             {
-                Console.Write("Enter the position of the task you want to view: ");
-                TaskManager.taskPosition = Convert.ToInt32(Console.ReadLine());
+                string position = TaskManager.CreateVariable("Enter the position of the task you want to view: ", true, true, false, null, tasks);
+
+                TaskManager.taskPosition = Convert.ToInt32(position);
             }
-            catch (FormatException)
+            catch (Exception)
             {
-                Console.WriteLine("Position must be a number, try again.");
-
-                ViewTask(fileManager);
-
-                return;
+                return false;
             }
 
-            try
-            {
-                var task = new Task();
-                task.ViewSubTasks(fileManager);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                Console.WriteLine("Position does not exist, try again.");
+            var task = new Task();
+            task.ViewSubTasks(fileManager);
 
-                ViewTask(fileManager);
-
-                return;
-            }
+            return true;
         }
 
         public bool ExistsContent(FileManager fileManager)
@@ -373,68 +273,44 @@ namespace ToDoListApp2
             return true;
         }
 
-        public void ToggleArchive(FileManager fileManager)
+        public bool ToggleArchive(FileManager fileManager)
         {
-            Console.Write("Are you sure you want to toggle archivation of this list? y/N: ");
+            bool areYouSure = TaskManager.AreYouSure("Are you sure you want to toggle archivation of this list? y/N: ");
 
-            switch (Console.ReadLine().ToUpper())
+            if (!areYouSure)
             {
-                case "Y":
-                    break;
-                default:
-                    ViewTasksCollapsed(fileManager);
-
-                    return;
+                return false;
             }
 
             TaskList currentList = fileManager.Lists[TaskManager.listPosition - 1];
 
             var listExists = false;
 
-            FileManager manager = null;
+            FileManager oppositeManager = TaskManager.GetOppositeManager(fileManager);
 
-            if (fileManager.GetType() == new ActiveManager().GetType())
+            foreach (TaskList list in oppositeManager.Lists)
             {
-                manager = new ArchiveManager();
-            }
-            else if (fileManager.GetType() == new ArchiveManager().GetType())
-            {
-                manager = new ActiveManager();
-            }
-
-            foreach (TaskList list in manager.Lists)
-            {
-                if (list.ListTitle == currentList.ListTitle)
+                if (list.Title == currentList.Title)
                 {
                     listExists = true;
                     break;
                 }
             }
 
-            var id = 1;
-
-            foreach (TaskList list in manager.Lists)
-            {
-                if (list.ListId >= id)
-                {
-                    id = list.ListId + 1;
-                }
-            }
-
-            currentList.ListId = id;
-
             if (listExists)
             {
                 Console.WriteLine("List with this name already exists.");
 
-                Edit(fileManager);
+                Edit(fileManager, true);
             }
 
-            manager.Lists.Add(currentList);
-            manager.Update();
+            oppositeManager.Lists.Add(currentList);
+            oppositeManager.Update();
 
             var taskLists = new TaskLists();
             taskLists.DeleteList(fileManager);
+
+            return true;
         }
 
         public void Sort(FileManager fileManager)
@@ -444,13 +320,14 @@ namespace ToDoListApp2
             Console.WriteLine("[P] To sort by priority.");
             Console.WriteLine("[C] To sort by completed.");
             Console.WriteLine("[T] To sort by number of sub-tasks.");
+            Console.WriteLine("[B] To go back.");
 
             Console.WriteLine();
             Console.Write("What do you want to do: ");
-            switch (Console.ReadLine().ToUpper())
+            switch (Console.ReadKey().Key.ToString().ToUpper())
             {
                 case "N":
-                    fileManager.Lists[TaskManager.listPosition - 1].Tasks = fileManager.Lists[TaskManager.listPosition - 1].Tasks.OrderBy(o => o.TaskTitle).ToList();
+                    fileManager.Lists[TaskManager.listPosition - 1].Tasks = fileManager.Lists[TaskManager.listPosition - 1].Tasks.OrderBy(o => o.Title).ToList();
 
 
                     break;
@@ -472,6 +349,12 @@ namespace ToDoListApp2
                 case "T":
                     fileManager.Lists[TaskManager.listPosition - 1].Tasks = fileManager.Lists[TaskManager.listPosition - 1].Tasks.OrderBy(o => o.SubTasks.Count()).ToList();
 
+
+                    break;
+                case "B":
+                    ViewTasksCollapsed(fileManager);
+                    var taskManager = new TaskManager(new Task(), new TaskList(), new TaskLists());
+                    taskManager.ListOptions(fileManager);
 
                     break;
             }
