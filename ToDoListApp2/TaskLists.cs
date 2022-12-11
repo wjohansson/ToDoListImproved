@@ -8,8 +8,8 @@ namespace ToDoListApp2
     {
         public void CreateList(FileManager fileManager)
         {
-            string title = "";
-            string category = "";
+            string title;
+            string category;
             try
             {
                 title = TaskManager.CreateVariable("Enter new list title: ", true, false, false, fileManager.Lists, null);
@@ -204,6 +204,7 @@ namespace ToDoListApp2
         public void DeleteList(FileManager fileManager)
         {
             bool areYouSure = true;
+
             if (TaskManager.listPosition == 0)
             {
                 try
@@ -218,6 +219,8 @@ namespace ToDoListApp2
                 }
 
                 areYouSure = TaskManager.AreYouSure("Are you sure you want to delete this list? y/N: ");
+
+
             }
 
             if (areYouSure)
@@ -228,8 +231,6 @@ namespace ToDoListApp2
 
                 fileManager.Update();
             }
-
-
         }
 
         public bool ExistsContent(FileManager fileManager)
@@ -267,7 +268,6 @@ namespace ToDoListApp2
                     break;
                 case "T":
                     fileManager.Lists = fileManager.Lists.OrderByDescending(o => o.Tasks.Count()).ToList();
-
 
                     break;
                 case "B":

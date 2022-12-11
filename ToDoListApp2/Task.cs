@@ -66,18 +66,7 @@ namespace ToDoListApp2
 
             if (TaskManager.AreYouSure("Are you sure you want to delete this sub-task? y/N: "))
             {
-                try
-                {
-                    subTasks.RemoveAt(Convert.ToInt32(position) - 1);
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    Console.WriteLine("Position does not exist. Try again");
-
-                    DeleteSubTask(fileManager);
-
-                    return;
-                }
+                subTasks.RemoveAt(Convert.ToInt32(position) - 1);
 
                 fileManager.Update();
             }
@@ -158,7 +147,6 @@ namespace ToDoListApp2
                 Console.WriteLine();
             }
 
-
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -170,6 +158,7 @@ namespace ToDoListApp2
             string title;
             string description;
             SubTask currentSubTask;
+
             try
             {
                 position = TaskManager.CreateVariable("Position of the sub-task you want to edit: ", true, true, false, null, subTasks);
@@ -183,7 +172,7 @@ namespace ToDoListApp2
                 Console.WriteLine();
                 Console.WriteLine($"Old description: {currentSubTask.Description}");
                 description = TaskManager.CreateVariable("Enter the new description or leave empty to keep old description: ", false, false, false, null, null);
-            
+
 
             }
             catch (Exception)
@@ -286,25 +275,7 @@ namespace ToDoListApp2
             }
             else
             {
-                var id = 1;
-
-                foreach (TaskList list in fileManager.Lists)
-                {
-                    if (list.Id >= id)
-                    {
-                        id = list.Id + 1;
-                    }
-                }
-
-                foreach (TaskList list in oppositeManager.Lists)
-                {
-                    if (list.Id >= id)
-                    {
-                        id = list.Id + 1;
-                    }
-                }
-
-                TaskList newList = new(currentList.Title, null, id, new List<Task>());
+                TaskList newList = new(currentList.Title, currentList.Category, currentList.Id, new List<Task>());
 
                 oppositeManager.Lists.Add(newList);
 

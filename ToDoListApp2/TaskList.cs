@@ -61,19 +61,19 @@ namespace ToDoListApp2
 
             if (TaskManager.taskPosition == 0)
             {
-                string position;
                 try
                 {
-                    position = TaskManager.CreateVariable("Enter the position of the task you want to delete: ", true, true, false, null, tasks);
+                    string position = TaskManager.CreateVariable("Enter the position of the task you want to delete: ", true, true, false, null, tasks);
+
+                    TaskManager.taskPosition = Convert.ToInt32(position);
                 }
                 catch (Exception)
                 {
                     return;
                 }
 
-                TaskManager.taskPosition = Convert.ToInt32(position);
-
                 areYouSure = TaskManager.AreYouSure("Are you sure you want to delete this task? y/N: ");
+
             }
 
             if (areYouSure)
@@ -90,9 +90,8 @@ namespace ToDoListApp2
 
             TaskList currentList = fileManager.Lists[TaskManager.listPosition - 1];
 
-
-            string title = "";
-            string category = "";
+            string title;
+            string category;
 
             try
             {
@@ -138,18 +137,17 @@ namespace ToDoListApp2
             List<Task> tasks = currentList.Tasks;
 
             string position;
-            Task currentTask;
 
             try
             {
                 position = TaskManager.CreateVariable("Enter the position of the task you want to toggle: ", true, true, false, null, tasks);
-
-                currentTask = tasks[Convert.ToInt32(position) - 1];
             }
             catch (Exception)
             {
                 return;
             }
+
+            Task currentTask = tasks[Convert.ToInt32(position) - 1];
 
             currentTask.Completed = !currentTask.Completed;
 
@@ -242,6 +240,7 @@ namespace ToDoListApp2
         public bool ViewTask(FileManager fileManager)
         {
             List<Task> tasks = fileManager.Lists[TaskManager.listPosition - 1].Tasks;
+
             try
             {
                 string position = TaskManager.CreateVariable("Enter the position of the task you want to view: ", true, true, false, null, tasks);
