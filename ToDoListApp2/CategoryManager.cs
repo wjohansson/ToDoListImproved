@@ -8,9 +8,10 @@
 
         public override void Create()
         {
+
             FileName = @"\ToDoListCategory.json";
 
-            Path = Directory.GetParent(_currentDir).Parent.Parent.FullName + FileName;
+            Path = Directory.GetParent(_currentDir).Parent.Parent.FullName + @"\Database" + FileName;
 
             if (!File.Exists(Path) || String.IsNullOrEmpty(File.ReadAllText(Path)) || File.ReadAllText(Path) == "[]")
             {

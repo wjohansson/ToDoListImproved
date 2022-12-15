@@ -18,7 +18,7 @@ namespace ToDoListApp2
 
         public virtual void Create()
         {
-            Path = Directory.GetParent(_currentDir).Parent.Parent.FullName + FileName;
+            Path = Directory.GetParent(_currentDir).Parent.Parent.FullName + @$"\Database\" + FileName;
 
             if (!File.Exists(Path) || String.IsNullOrEmpty(File.ReadAllText(Path)))
             {
